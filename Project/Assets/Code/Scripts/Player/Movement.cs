@@ -16,7 +16,7 @@ public class Movement : MonoBehaviour
     public float jumpSpeed = 10f;
     public float speedMultiplier = 1f;
     public float jumpMultiplier = 1f;
-    
+
     public MovementState movementState = MovementState.Default;
 
     // Start is called before the first frame update
@@ -66,6 +66,6 @@ public class Movement : MonoBehaviour
     {
         Move();
         Jump();
-        Face();
+        //Face();
     }
 }
