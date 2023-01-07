@@ -63,7 +63,7 @@ public class GameManager : MonoBehaviour
     {
         successfulAttempts++;
         playerMovement.speedMultiplier += .1f;
-        playerMovement.jumpMultiplier += .1f;
+        playerMovement.jumpMultiplier += .05f;
     }
 
     void CountDown()
