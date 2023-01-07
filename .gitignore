@@ -98,4 +98,4 @@ fmod.log
 /Assets/FMODAssets/*
 /Assets/FMODStudioCache.meta
 
-/Project/Assets/Plugins/FMOD/Cache/Editor/FMODStudioCache.asset
+Project/Assets/Plugins/FMOD/Cache/Editor/FMODStudioCache.asset
