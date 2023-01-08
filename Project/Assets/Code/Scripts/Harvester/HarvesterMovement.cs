@@ -7,7 +7,8 @@ using UnityEngine.AI;
 public enum HarvesterState
 {
     Collect,
-    Chase
+    Chase,
+    Seek
 }
 
 public class HarvesterMovement : MonoBehaviour
