@@ -5,33 +5,67 @@ using UnityEngine;
 public class HarvesterSight : MonoBehaviour
 {
     public float sightRange = 10f;
-
-    public float outOfSightTimer = 5f;
-
+    public float sightAngle = 45f;
+    public float eyeHeight = 1f;
+    public float outOfSightThreshold = 5f;
     public LayerMask targetLayer;
 
+    private HarvesterMovement harvester;
+    
+    bool isTargetInSight = false;
+    bool hasTimerStarted = false;
     Transform target;
 
     // Start is called before the first frame update
     void Start()
     {
+        harvester = FindObjectOfType<HarvesterMovement>();
         target = GameObject.FindGameObjectWithTag("Player").transform;
+    }
+
+    private IEnumerator OutOfSightTimer()
+    {
+        print("timer started");
+        hasTimerStarted = true;
+        
+        yield return new WaitForSeconds(outOfSightThreshold);
+        print("harvest state change");
+        harvester.harvesterState = HarvesterState.Collect;
+        hasTimerStarted = false;
+        isTargetInSight = false;
     }
 
     // Update is called once per frame
     void Update()
     {
-        float distance = Vector3.Distance(transform.position, target.position);
+        Vector3 directionToPlayer = target.position - transform.position;
 
-        if (distance <= sightRange)
+        if (directionToPlayer.magnitude <= sightRange)
         {
-            RaycastHit hit;
-            if (Physics.Raycast(transform.position, target.position - transform.position, out hit, sightRange, targetLayer))
+            float angle = Vector3.Angle(transform.forward, directionToPlayer);
+
+            if (angle <= sightAngle)
             {
-                if (hit.transform == target)
+                RaycastHit hit;
+                if (Physics.Raycast(transform.position + Vector3.up * eyeHeight, directionToPlayer, out hit, sightRange, targetLayer))
                 {
-                    print("target in sight");
+                    if (hit.transform == target)
+                    {
+                        print("target in sight");
+                        isTargetInSight = true;
+                        harvester.harvesterState = HarvesterState.Chase;
+                    }
                 }
+                else
+                {
+                    print("out of sight after in sight");
+                    if (!hasTimerStarted && isTargetInSight)
+                    {
+                        print("coroutine started");
+                        StartCoroutine(OutOfSightTimer());
+                    }
+                }
+                Debug.DrawRay(transform.position + Vector3.up * eyeHeight, directionToPlayer, Color.yellow, 2, false);
             }
         }
     }

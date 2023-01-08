@@ -3,6 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
+public enum HarvesterState
+{
+    Collect,
+    Chase
+}
+
 public class HarvesterMovement : MonoBehaviour
 {
 
@@ -12,6 +18,8 @@ public class HarvesterMovement : MonoBehaviour
 
     public float followSpeed = 2.0f;
 
+    public HarvesterState harvesterState;
+
     private NavMeshAgent agent;
 
     GameManager gameManager;
@@ -19,20 +27,41 @@ public class HarvesterMovement : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        harvesterState = HarvesterState.Collect;
         agent = GetComponent<NavMeshAgent>();
         gameManager = FindObjectOfType<GameManager>();
+    }
+
+    private void Chase()
+    {
+        if (agent == null) return; 
+
+        agent.SetDestination(player.position);
+    }
+
+    public void Collect()
+    {
+        if (agent.hasPath)
+        {
+            agent.destination = Vector3.zero;
+        }
+        // Patrol
+        // print("Patrolling");
     }
 
     // Update is called once per frame
     void Update()
     {
-        print(gameManager.gameState);
-        if (gameManager.gameState == GameState.Chase)
+        
+        if (gameManager.gameState == GameState.Chase || harvesterState == HarvesterState.Chase)
         {
-            agent.SetDestination(player.position);
+            Chase();
         }
-        
-        
+
+        if (harvesterState == HarvesterState.Collect)
+        {
+            Collect();
+        }
     }
 
 }
