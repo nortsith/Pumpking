@@ -135,10 +135,14 @@ MonoBehaviour:
   speedMultiplier: 1
   jumpMultiplier: 1
   isSpottable: 0
+  groundLayerMask:
+    serializedVersion: 2
+    m_Bits: 64
   movementState: 0
   activeInput: 0
   inputTimer: 0.2
   spotTimer: 0.5
+  isGrounded: 0
 --- !u!114 &317513651867342292
 MonoBehaviour:
   m_ObjectHideFlags: 0

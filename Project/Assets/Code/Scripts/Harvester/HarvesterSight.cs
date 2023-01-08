@@ -65,6 +65,11 @@ public class HarvesterSight : MonoBehaviour
             {
                 StartCoroutine(OutOfSightTimer());
             }
+            else if (hit.transform.tag == "Player" && playerMovement.isSpottable && hasTimerStarted)
+            {
+                StopAllCoroutines();
+                hasTimerStarted = false;
+            }
         }
         else
         {
