@@ -2,6 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum MovementState
+{
+    Default,
+    Immobilize,
+    Slowed,
+}
+
 public class Movement : MonoBehaviour
 {
     Rigidbody body;
@@ -9,6 +16,8 @@ public class Movement : MonoBehaviour
     public float jumpSpeed = 10f;
     public float speedMultiplier = 1f;
     public float jumpMultiplier = 1f;
+
+    public MovementState movementState = MovementState.Default;
 
     // Start is called before the first frame update
     void Start()
@@ -18,9 +27,18 @@ public class Movement : MonoBehaviour
 
     void Move()
     {
+        if (movementState == MovementState.Immobilize)
+        {
+            body.velocity = Vector3.zero;
+            return;
+        };
+
         float vertical = Input.GetAxisRaw("Vertical");
         float horizontal = Input.GetAxisRaw("Horizontal");
-        Vector3 move = new Vector3(horizontal, 0, vertical).normalized * speed * speedMultiplier;
+
+        float multiplier = speedMultiplier * (movementState == MovementState.Slowed ? .5f : 1f);
+
+        Vector3 move = new Vector3(horizontal, 0, vertical).normalized * speed * multiplier;
         move.y = body.velocity.y;
         body.velocity = move;
     }
@@ -48,6 +66,6 @@ public class Movement : MonoBehaviour
     {
         Move();
         Jump();
-        Face();
+        //Face();
     }
 }
