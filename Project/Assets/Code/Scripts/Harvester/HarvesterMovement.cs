@@ -8,7 +8,9 @@ public enum HarvesterState
 {
     Collect,
     Chase,
-    Seek
+    Seek,
+    LastSeen,
+    LookAround
 }
 
 public class HarvesterMovement : MonoBehaviour
@@ -25,6 +27,8 @@ public class HarvesterMovement : MonoBehaviour
     public HarvesterState harvesterState;
 
     private NavMeshAgent agent;
+
+    private bool isLookingAround = false;
 
     GameManager gameManager;
     Animator animator;
@@ -46,7 +50,7 @@ public class HarvesterMovement : MonoBehaviour
         agent.SetDestination(player.position);
     }
 
-    public void Collect()
+    private void Collect()
     {
         if (!agent.pathPending && agent.remainingDistance < 0.5f)
         {
@@ -56,6 +60,38 @@ public class HarvesterMovement : MonoBehaviour
 
             if (shouldReturnLastDestination) shouldReturnLastDestination = false;
         }
+    }
+
+    public Vector3 RandomNavmeshLocation(float radius)
+    {
+        Vector3 randomDirection = Random.insideUnitSphere * radius;
+        randomDirection += transform.position;
+        randomDirection.y = transform.position.y;
+        NavMeshHit hit;
+        if (NavMesh.SamplePosition(randomDirection, out hit, radius, 1))
+        {
+            print(hit.position);
+            return hit.position;
+        } else
+        {
+            return RandomNavmeshLocation(radius);
+        }
+    }
+
+    IEnumerator LookAround()
+    {
+        isLookingAround = true;
+        agent.SetDestination(RandomNavmeshLocation(5f));
+        yield return new WaitUntil(() => !agent.pathPending && agent.remainingDistance < 0.5f);
+
+        agent.SetDestination(RandomNavmeshLocation(5f));
+        yield return new WaitUntil(() => !agent.pathPending && agent.remainingDistance < 0.5f);
+
+        agent.SetDestination(RandomNavmeshLocation(5f));
+        yield return new WaitUntil(() => !agent.pathPending && agent.remainingDistance < 0.5f);
+
+        isLookingAround = false;
+        harvesterState = HarvesterState.Collect;
     }
 
     // Update is called once per frame
@@ -71,6 +107,13 @@ public class HarvesterMovement : MonoBehaviour
         {
             Collect();
         }
+
+        if (harvesterState == HarvesterState.LookAround && !isLookingAround)
+        {
+            StartCoroutine(LookAround());
+        }
+
+        animator.SetBool("isWalking", harvesterState != HarvesterState.Seek);
     }
 
 }

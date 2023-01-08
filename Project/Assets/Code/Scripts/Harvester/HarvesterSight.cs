@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 using static UnityEngine.UI.Image;
 
 public class HarvesterSight : MonoBehaviour
@@ -18,20 +19,30 @@ public class HarvesterSight : MonoBehaviour
     Movement playerMovement;
     public Transform target;
 
+    NavMeshAgent agent;
+
     // Start is called before the first frame update
     void Start()
     {
         harvester = FindObjectOfType<HarvesterMovement>();
         playerMovement = FindObjectOfType<Movement>();
+        agent = GetComponent<NavMeshAgent>();
     }
 
     private IEnumerator OutOfSightTimer()
     {
         hasTimerStarted = true;
 
+        harvester.shouldReturnLastDestination = false;
+        harvester.harvesterState = HarvesterState.LastSeen;
+            
+        yield return new WaitUntil(() => agent.remainingDistance < 0.5f);
+        harvester.harvesterState = HarvesterState.Seek;
+            
         yield return new WaitForSeconds(outOfSightThreshold);
 
-        harvester.harvesterState = HarvesterState.Collect;
+        harvester.harvesterState = HarvesterState.LookAround;
+
         hasTimerStarted = false;
         isTargetInSight = false;
     }
@@ -47,19 +58,19 @@ public class HarvesterSight : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(transform.position, directionToPlayer, out hit) && angle <= sightAngle)
         {
-            if (hit.transform.tag == "Player" && playerMovement.isSpottable)
+            if (hit.transform.tag == "Player" && playerMovement.isSpottable && !hasTimerStarted)
             {
-                isTargetInSight = true;
                 harvester.harvesterState = HarvesterState.Chase;
+                StopAllCoroutines();
             }
-            else if (!hasTimerStarted)
+            else if (!hasTimerStarted && harvester.harvesterState == HarvesterState.Chase)
             {
                 StartCoroutine(OutOfSightTimer());
             }
         }
         else
         {
-            if (!hasTimerStarted && isTargetInSight)
+            if (!hasTimerStarted && harvester.harvesterState == HarvesterState.Chase)
             {
                 StartCoroutine(OutOfSightTimer());
             }
