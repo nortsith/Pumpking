@@ -87,7 +87,7 @@ public class Movement : MonoBehaviour
             Move();
         Jump();
 
-        isSpottable = body.velocity.sqrMagnitude > .3f;
+        isSpottable = body.velocity.sqrMagnitude > .5f;
         //Face();
     }
 }

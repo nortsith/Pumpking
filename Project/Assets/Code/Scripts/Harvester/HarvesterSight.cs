@@ -14,22 +14,21 @@ public class HarvesterSight : MonoBehaviour
     
     bool isTargetInSight = false;
     bool hasTimerStarted = false;
-    Transform target;
+    Movement target;
 
     // Start is called before the first frame update
     void Start()
     {
         harvester = FindObjectOfType<HarvesterMovement>();
-        target = GameObject.FindGameObjectWithTag("Player").transform;
+        target = FindObjectOfType<Movement>();
     }
 
     private IEnumerator OutOfSightTimer()
     {
-        print("timer started");
         hasTimerStarted = true;
-        
+
         yield return new WaitForSeconds(outOfSightThreshold);
-        print("harvest state change");
+
         harvester.harvesterState = HarvesterState.Collect;
         hasTimerStarted = false;
         isTargetInSight = false;
@@ -38,7 +37,7 @@ public class HarvesterSight : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Vector3 directionToPlayer = target.position - transform.position;
+        Vector3 directionToPlayer = target.transform.position - transform.position;
 
         if (directionToPlayer.magnitude <= sightRange)
         {
@@ -49,19 +48,16 @@ public class HarvesterSight : MonoBehaviour
                 RaycastHit hit;
                 if (Physics.Raycast(transform.position + Vector3.up * eyeHeight, directionToPlayer, out hit, sightRange, targetLayer))
                 {
-                    if (hit.transform == target)
+                    if (hit.transform == target.transform && target.isSpottable)
                     {
-                        print("target in sight");
                         isTargetInSight = true;
                         harvester.harvesterState = HarvesterState.Chase;
                     }
                 }
                 else
                 {
-                    print("out of sight after in sight");
                     if (!hasTimerStarted && isTargetInSight)
                     {
-                        print("coroutine started");
                         StartCoroutine(OutOfSightTimer());
                     }
                 }
