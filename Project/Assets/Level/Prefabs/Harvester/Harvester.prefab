@@ -152,9 +152,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca5c4c122070b9242ba6c4cf76f08d21, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  patrolPoints:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   player: {fileID: 0}
-  followDistance: 1
-  followSpeed: 2
+  shouldReturnLastDestination: 0
   harvesterState: 0
 --- !u!114 &7715462935826341992
 MonoBehaviour:

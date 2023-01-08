@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -12,12 +13,14 @@ public enum HarvesterState
 public class HarvesterMovement : MonoBehaviour
 {
 
+    public Transform[] patrolPoints;
+
     public Transform player;
 
-    public float followDistance = 15.0f;
+    private Vector3 lastDestination;
 
-    public float followSpeed = 2.0f;
-
+    public bool shouldReturnLastDestination = false;
+    
     public HarvesterState harvesterState;
 
     private NavMeshAgent agent;
@@ -30,23 +33,27 @@ public class HarvesterMovement : MonoBehaviour
         harvesterState = HarvesterState.Collect;
         agent = GetComponent<NavMeshAgent>();
         gameManager = FindObjectOfType<GameManager>();
+
     }
 
     private void Chase()
     {
-        if (agent == null) return; 
-
+        if (agent == null) return;
+        shouldReturnLastDestination = true;
+        lastDestination = agent.transform.position;
         agent.SetDestination(player.position);
     }
 
     public void Collect()
     {
-        if (agent.hasPath)
+        if (!agent.pathPending && agent.remainingDistance < 0.5f)
         {
-            agent.destination = Vector3.zero;
+            Vector3 randomDestination = patrolPoints[Random.Range(0, patrolPoints.Length)].position;
+
+            agent.destination = shouldReturnLastDestination ? lastDestination : randomDestination;
+
+            if (shouldReturnLastDestination) shouldReturnLastDestination = false;
         }
-        // Patrol
-        // print("Patrolling");
     }
 
     // Update is called once per frame
