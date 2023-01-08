@@ -81,13 +81,13 @@ public class HarvesterMovement : MonoBehaviour
     IEnumerator LookAround()
     {
         isLookingAround = true;
-        agent.SetDestination(RandomNavmeshLocation(5f));
+        agent.SetDestination(RandomNavmeshLocation(10f));
         yield return new WaitUntil(() => !agent.pathPending && agent.remainingDistance < 0.5f);
 
-        agent.SetDestination(RandomNavmeshLocation(5f));
+        agent.SetDestination(RandomNavmeshLocation(10f));
         yield return new WaitUntil(() => !agent.pathPending && agent.remainingDistance < 0.5f);
 
-        agent.SetDestination(RandomNavmeshLocation(5f));
+        agent.SetDestination(RandomNavmeshLocation(10f));
         yield return new WaitUntil(() => !agent.pathPending && agent.remainingDistance < 0.5f);
 
         isLookingAround = false;
