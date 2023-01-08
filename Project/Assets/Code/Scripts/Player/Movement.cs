@@ -16,6 +16,7 @@ public class Movement : MonoBehaviour
     public float jumpSpeed = 10f;
     public float speedMultiplier = 1f;
     public float jumpMultiplier = 1f;
+    public bool isSpottable = false;
 
     public MovementState movementState = MovementState.Default;
 
@@ -23,6 +24,23 @@ public class Movement : MonoBehaviour
     void Start()
     {
         body = GetComponent<Rigidbody>();
+    }
+
+
+    public bool activeInput = false;
+    public float inputTimer = .1f;
+    void CheckInput()
+    {
+        float vertical = Input.GetAxisRaw("Vertical");
+        float horizontal = Input.GetAxisRaw("Horizontal");
+        if (vertical == 0 && horizontal == 0)
+        {
+            if (inputTimer > 0) inputTimer -= Time.deltaTime;
+        }
+        else
+        {
+            inputTimer = .1f;
+        }
     }
 
     void Move()
@@ -64,8 +82,12 @@ public class Movement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Move();
+        CheckInput();
+        if (inputTimer > 0)
+            Move();
         Jump();
+
+        isSpottable = body.velocity.sqrMagnitude > .3f;
         //Face();
     }
 }
