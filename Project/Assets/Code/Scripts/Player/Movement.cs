@@ -17,6 +17,7 @@ public class Movement : MonoBehaviour
     public float speedMultiplier = 1f;
     public float jumpMultiplier = 1f;
     public bool isSpottable = false;
+    public LayerMask groundLayerMask;
 
     public MovementState movementState = MovementState.Default;
 
@@ -64,7 +65,7 @@ public class Movement : MonoBehaviour
 
     void Jump()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
         {
             body.velocity += Vector3.up * jumpSpeed * jumpMultiplier;
         }
@@ -103,15 +104,19 @@ public class Movement : MonoBehaviour
         }
     }
 
+    public bool isGrounded;
+
     // Update is called once per frame
     void Update()
     {
         CheckInput();
-        if (inputTimer > 0)
+        if (inputTimer > 0 && isGrounded)
             Move();
         Jump();
 
         SpottableHandler();
+
+        isGrounded = Physics.CheckSphere(transform.position + (transform.up * .3f), 2f, groundLayerMask);
         //Face();
     }
 }
