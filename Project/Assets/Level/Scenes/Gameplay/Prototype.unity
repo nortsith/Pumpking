@@ -1420,6 +1420,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c48a4fd3eeada39418c31c58c63116f7, type: 3}
+--- !u!4 &317513650080612314 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2946336104553565358, guid: c48a4fd3eeada39418c31c58c63116f7, type: 3}
+  m_PrefabInstance: {fileID: 317513650080612313}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &994699282455904453
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1532,6 +1537,10 @@ PrefabInstance:
       propertyPath: patrolPoints.Array.data[3]
       value: 
       objectReference: {fileID: 1010308578}
+    - target: {fileID: 1097063331295363873, guid: ec5b352a4da78b34a82f5891312fc28b, type: 3}
+      propertyPath: target
+      value: 
+      objectReference: {fileID: 317513650080612314}
     - target: {fileID: 1097063331295363876, guid: ec5b352a4da78b34a82f5891312fc28b, type: 3}
       propertyPath: m_RootOrder
       value: 1

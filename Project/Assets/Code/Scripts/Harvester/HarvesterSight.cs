@@ -13,8 +13,7 @@ public class HarvesterSight : MonoBehaviour
     public LayerMask targetLayer;
 
     private HarvesterMovement harvester;
-    
-    bool isTargetInSight = false;
+
     bool hasTimerStarted = false;
     Movement playerMovement;
     public Transform target;
@@ -35,16 +34,15 @@ public class HarvesterSight : MonoBehaviour
 
         harvester.shouldReturnLastDestination = false;
         harvester.harvesterState = HarvesterState.LastSeen;
-            
+
         yield return new WaitUntil(() => agent.remainingDistance < 0.5f);
         harvester.harvesterState = HarvesterState.Seek;
-            
+
         yield return new WaitForSeconds(outOfSightThreshold);
 
         harvester.harvesterState = HarvesterState.LookAround;
 
         hasTimerStarted = false;
-        isTargetInSight = false;
     }
 
     // Update is called once per frame
@@ -75,6 +73,6 @@ public class HarvesterSight : MonoBehaviour
                 StartCoroutine(OutOfSightTimer());
             }
         }
-            
+
     }
 }

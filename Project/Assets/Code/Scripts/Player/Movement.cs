@@ -79,6 +79,29 @@ public class Movement : MonoBehaviour
         }
     }
 
+    public float spotTimer = 3f;
+    void SpottableHandler()
+    {
+        if (body.velocity.sqrMagnitude < 2f)
+        {
+            if (spotTimer > 0)
+            {
+                spotTimer -= Time.deltaTime;
+                isSpottable = true;
+            }
+            else
+            {
+                isSpottable = false;
+            }
+
+        }
+        else
+        {
+            spotTimer = 3f;
+            isSpottable = true;
+        }
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -87,7 +110,7 @@ public class Movement : MonoBehaviour
             Move();
         Jump();
 
-        isSpottable = body.velocity.sqrMagnitude > .5f;
+        SpottableHandler();
         //Face();
     }
 }

@@ -70,9 +70,9 @@ public class HarvesterMovement : MonoBehaviour
         NavMeshHit hit;
         if (NavMesh.SamplePosition(randomDirection, out hit, radius, 1))
         {
-            print(hit.position);
             return hit.position;
-        } else
+        }
+        else
         {
             return RandomNavmeshLocation(radius);
         }
