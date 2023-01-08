@@ -57,6 +57,7 @@ public class Movement : MonoBehaviour
         float multiplier = speedMultiplier * (movementState == MovementState.Slowed ? .5f : 1f);
 
         Vector3 move = new Vector3(horizontal, 0, vertical).normalized * speed * multiplier;
+        //move = Camera.main.transform.TransformDirection(move);
         move.y = body.velocity.y;
         body.velocity = move;
     }
