@@ -20,12 +20,13 @@ public class HarvesterMovement : MonoBehaviour
     private Vector3 lastDestination;
 
     public bool shouldReturnLastDestination = false;
-    
+
     public HarvesterState harvesterState;
 
     private NavMeshAgent agent;
 
     GameManager gameManager;
+    Animator animator;
 
     // Start is called before the first frame update
     void Start()
@@ -33,7 +34,7 @@ public class HarvesterMovement : MonoBehaviour
         harvesterState = HarvesterState.Collect;
         agent = GetComponent<NavMeshAgent>();
         gameManager = FindObjectOfType<GameManager>();
-
+        animator = GetComponent<Animator>();
     }
 
     private void Chase()
@@ -59,7 +60,7 @@ public class HarvesterMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
         if (gameManager.gameState == GameState.Chase || harvesterState == HarvesterState.Chase)
         {
             Chase();

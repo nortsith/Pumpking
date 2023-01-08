@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 317513651867342289}
   - component: {fileID: 317513651867342302}
   - component: {fileID: 317513651867342292}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Pumpking
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -133,7 +133,10 @@ MonoBehaviour:
   jumpSpeed: 10
   speedMultiplier: 1
   jumpMultiplier: 1
+  isSpottable: 0
   movementState: 0
+  activeInput: 0
+  inputTimer: 0.2
 --- !u!114 &317513651867342292
 MonoBehaviour:
   m_ObjectHideFlags: 0
