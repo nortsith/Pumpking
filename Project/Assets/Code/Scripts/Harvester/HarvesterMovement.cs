@@ -37,9 +37,9 @@ public class HarvesterMovement : MonoBehaviour
     void Start()
     {
         harvesterState = HarvesterState.Collect;
-        agent = GetComponent<NavMeshAgent>();
+        agent = gameObject.GetComponent<NavMeshAgent>();
         gameManager = FindObjectOfType<GameManager>();
-        animator = GetComponent<Animator>();
+        animator = gameObject.GetComponent<Animator>();
     }
 
     private void Chase()
@@ -97,7 +97,6 @@ public class HarvesterMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
         if (gameManager.gameState == GameState.Chase || harvesterState == HarvesterState.Chase)
         {
             Chase();
