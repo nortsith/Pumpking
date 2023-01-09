@@ -7,7 +7,10 @@ using UnityEngine.AI;
 public enum HarvesterState
 {
     Collect,
-    Chase
+    Chase,
+    Seek,
+    LastSeen,
+    LookAround
 }
 
 public class HarvesterMovement : MonoBehaviour
@@ -25,6 +28,8 @@ public class HarvesterMovement : MonoBehaviour
 
     private NavMeshAgent agent;
 
+    private bool isLookingAround = false;
+
     GameManager gameManager;
     Animator animator;
 
@@ -32,9 +37,9 @@ public class HarvesterMovement : MonoBehaviour
     void Start()
     {
         harvesterState = HarvesterState.Collect;
-        agent = GetComponent<NavMeshAgent>();
+        agent = gameObject.GetComponent<NavMeshAgent>();
         gameManager = FindObjectOfType<GameManager>();
-        animator = GetComponent<Animator>();
+        animator = gameObject.GetComponent<Animator>();
     }
 
     private void Chase()
@@ -43,12 +48,14 @@ public class HarvesterMovement : MonoBehaviour
         shouldReturnLastDestination = true;
         lastDestination = agent.transform.position;
         agent.SetDestination(player.position);
+        animator.SetBool("isAttacking", Vector3.Distance(transform.position, player.position) <= 3.5f);
     }
 
-    public void Collect()
+    private void Collect()
     {
         if (!agent.pathPending && agent.remainingDistance < 0.5f)
         {
+            animator.SetBool("isAttacking", false);
             Vector3 randomDestination = patrolPoints[Random.Range(0, patrolPoints.Length)].position;
 
             agent.destination = shouldReturnLastDestination ? lastDestination : randomDestination;
@@ -57,10 +64,42 @@ public class HarvesterMovement : MonoBehaviour
         }
     }
 
+    public Vector3 RandomNavmeshLocation(float radius)
+    {
+        Vector3 randomDirection = Random.insideUnitSphere * radius;
+        randomDirection += transform.position;
+        randomDirection.y = transform.position.y;
+        NavMeshHit hit;
+        if (NavMesh.SamplePosition(randomDirection, out hit, radius, 1))
+        {
+            return hit.position;
+        }
+        else
+        {
+            return RandomNavmeshLocation(radius);
+        }
+    }
+
+    IEnumerator LookAround()
+    {
+        animator.SetBool("isAttacking", false);
+        isLookingAround = true;
+        agent.SetDestination(RandomNavmeshLocation(10f));
+        yield return new WaitUntil(() => !agent.pathPending && agent.remainingDistance < 0.5f);
+
+        agent.SetDestination(RandomNavmeshLocation(10f));
+        yield return new WaitUntil(() => !agent.pathPending && agent.remainingDistance < 0.5f);
+
+        agent.SetDestination(RandomNavmeshLocation(10f));
+        yield return new WaitUntil(() => !agent.pathPending && agent.remainingDistance < 0.5f);
+
+        isLookingAround = false;
+        harvesterState = HarvesterState.Collect;
+    }
+
     // Update is called once per frame
     void Update()
     {
-
         if (gameManager.gameState == GameState.Chase || harvesterState == HarvesterState.Chase)
         {
             Chase();
@@ -70,6 +109,14 @@ public class HarvesterMovement : MonoBehaviour
         {
             Collect();
         }
+
+        if (harvesterState == HarvesterState.LookAround && !isLookingAround)
+        {
+            StartCoroutine(LookAround());
+        }
+
+        animator.SetBool("isWalking", harvesterState != HarvesterState.Seek);
+        agent.stoppingDistance = harvesterState == HarvesterState.Chase ? 3f : 0f;
     }
 
 }

@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
+using static UnityEngine.UI.Image;
 
 public class HarvesterSight : MonoBehaviour
 {
@@ -11,58 +13,71 @@ public class HarvesterSight : MonoBehaviour
     public LayerMask targetLayer;
 
     private HarvesterMovement harvester;
-    
-    bool isTargetInSight = false;
+
     bool hasTimerStarted = false;
-    Movement target;
+    Movement playerMovement;
+    public Transform target;
+
+    NavMeshAgent agent;
 
     // Start is called before the first frame update
     void Start()
     {
-        harvester = FindObjectOfType<HarvesterMovement>();
-        target = FindObjectOfType<Movement>();
+        harvester = gameObject.GetComponent<HarvesterMovement>();
+        playerMovement = FindObjectOfType<Movement>();
+        agent = gameObject.GetComponent<NavMeshAgent>();
     }
 
     private IEnumerator OutOfSightTimer()
     {
         hasTimerStarted = true;
 
+        harvester.shouldReturnLastDestination = false;
+        harvester.harvesterState = HarvesterState.LastSeen;
+
+        yield return new WaitUntil(() => agent.remainingDistance < 0.5f);
+        harvester.harvesterState = HarvesterState.Seek;
+
         yield return new WaitForSeconds(outOfSightThreshold);
 
-        harvester.harvesterState = HarvesterState.Collect;
+        harvester.harvesterState = HarvesterState.LookAround;
+
         hasTimerStarted = false;
-        isTargetInSight = false;
     }
 
     // Update is called once per frame
     void Update()
     {
         Vector3 directionToPlayer = target.transform.position - transform.position;
+        Debug.DrawRay(transform.position, directionToPlayer, Color.yellow);
 
-        if (directionToPlayer.magnitude <= sightRange)
+        float angle = Vector3.Angle(transform.forward, directionToPlayer);
+
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position, directionToPlayer, out hit) && angle <= sightAngle)
         {
-            float angle = Vector3.Angle(transform.forward, directionToPlayer);
-
-            if (angle <= sightAngle)
+            if (hit.transform.tag == "Player" && playerMovement.isSpottable && !hasTimerStarted)
             {
-                RaycastHit hit;
-                if (Physics.Raycast(transform.position + Vector3.up * eyeHeight, directionToPlayer, out hit, sightRange, targetLayer))
-                {
-                    if (hit.transform == target.transform && target.isSpottable)
-                    {
-                        isTargetInSight = true;
-                        harvester.harvesterState = HarvesterState.Chase;
-                    }
-                }
-                else
-                {
-                    if (!hasTimerStarted && isTargetInSight)
-                    {
-                        StartCoroutine(OutOfSightTimer());
-                    }
-                }
-                Debug.DrawRay(transform.position + Vector3.up * eyeHeight, directionToPlayer, Color.yellow, 2, false);
+                harvester.harvesterState = HarvesterState.Chase;
+                StopAllCoroutines();
+            }
+            else if (!hasTimerStarted && harvester.harvesterState == HarvesterState.Chase)
+            {
+                StartCoroutine(OutOfSightTimer());
+            }
+            else if (hit.transform.tag == "Player" && playerMovement.isSpottable && hasTimerStarted)
+            {
+                StopAllCoroutines();
+                hasTimerStarted = false;
             }
         }
+        else
+        {
+            if (!hasTimerStarted && harvester.harvesterState == HarvesterState.Chase)
+            {
+                StartCoroutine(OutOfSightTimer());
+            }
+        }
+
     }
 }
