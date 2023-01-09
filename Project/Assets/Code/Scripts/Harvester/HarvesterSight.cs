@@ -23,9 +23,9 @@ public class HarvesterSight : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        harvester = FindObjectOfType<HarvesterMovement>();
+        harvester = gameObject.GetComponent<HarvesterMovement>();
         playerMovement = FindObjectOfType<Movement>();
-        agent = GetComponent<NavMeshAgent>();
+        agent = gameObject.GetComponent<NavMeshAgent>();
     }
 
     private IEnumerator OutOfSightTimer()
