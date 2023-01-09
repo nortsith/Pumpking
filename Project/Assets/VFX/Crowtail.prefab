@@ -1195,7 +1195,7 @@ ParticleSystem:
     boxThickness: {x: 0, y: 0, z: 0}
     radiusThickness: 0.5
     donutRadius: 1
-    m_Position: {x: 0, y: 0, z: 40}
+    m_Position: {x: 0, y: 0, z: 15}
     m_Rotation: {x: 0, y: 0, z: 0}
     m_Scale: {x: 3, y: 3, z: 15}
     placementMode: 2
@@ -4317,7 +4317,7 @@ ParticleSystem:
   CollisionModule:
     enabled: 1
     serializedVersion: 4
-    type: 0
+    type: 1
     collisionMode: 0
     colliderForce: 0
     multiplyColliderForceByParticleSize: 0
@@ -4486,12 +4486,12 @@ ParticleSystem:
         m_RotationOrder: 4
     minKillSpeed: 0
     maxKillSpeed: 10000
-    radiusScale: 1
+    radiusScale: 0.1
     collidesWith:
       serializedVersion: 2
-      m_Bits: 2147483647
+      m_Bits: 64
     maxCollisionShapes: 256
-    quality: 1
+    quality: 0
     voxelSize: 0.5
     collisionMessages: 0
     collidesWithDynamic: 1
