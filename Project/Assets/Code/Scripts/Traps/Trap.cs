@@ -5,6 +5,7 @@ using UnityEngine;
 public class Trap : MonoBehaviour
 {
     public float duration = 5.0f;
+    Animator animator;
     public enum Option
     {
         Bear = 1,
@@ -15,11 +16,14 @@ public class Trap : MonoBehaviour
 
     private Movement playerMovement;
     private float timer;
+    private BoxCollider boxCollider;
 
     // Start is called before the first frame update
     void Start()
     {
         playerMovement = FindObjectOfType<Movement>();
+        animator = GetComponent<Animator>();
+        boxCollider = GetComponent<BoxCollider>();
     }
 
     // Update is called once per frame
@@ -32,6 +36,7 @@ public class Trap : MonoBehaviour
     {
         print("Trapped!");
         timer = duration;
+        animator.SetTrigger("Triggered");
         while (timer > 0)
         {
             yield return new WaitForSeconds(1);
@@ -40,7 +45,7 @@ public class Trap : MonoBehaviour
 
         playerMovement.movementState = MovementState.Default;
         print("Not Trapped!");
-
+        Destroy(gameObject);
         yield return null;
     }
 
@@ -59,6 +64,7 @@ public class Trap : MonoBehaviour
     private void OnTriggerEnter(Collider trappedObject)
     {
         if (trappedObject.tag != "Player") return;
+        boxCollider.enabled = false;
         switch (TrapType)
         {
             case Option.Sticky:
