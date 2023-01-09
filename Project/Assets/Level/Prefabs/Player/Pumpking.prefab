@@ -131,7 +131,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 5
-  jumpSpeed: 1
+  jumpSpeed: 7
   speedMultiplier: 1
   jumpMultiplier: 1
   isSpottable: 0
