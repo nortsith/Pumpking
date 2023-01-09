@@ -37,7 +37,7 @@ public class Trap : MonoBehaviour
             yield return new WaitForSeconds(1);
             timer--;
         }
-        
+
         playerMovement.movementState = MovementState.Default;
         print("Not Trapped!");
 
@@ -55,8 +55,10 @@ public class Trap : MonoBehaviour
         playerMovement.movementState = MovementState.Immobilize;
         StartCoroutine(TrapTimer());
     }
-    
-    private void OnTriggerEnter(Collider trappedObject) {
+
+    private void OnTriggerEnter(Collider trappedObject)
+    {
+        if (trappedObject.tag != "Player") return;
         switch (TrapType)
         {
             case Option.Sticky:
@@ -68,6 +70,6 @@ public class Trap : MonoBehaviour
             default:
                 return;
         }
-        
+
     }
 }
