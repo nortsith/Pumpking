@@ -46,12 +46,6 @@ public class Movement : MonoBehaviour
 
     void Move()
     {
-        if (movementState == MovementState.Immobilize)
-        {
-            body.velocity = Vector3.zero;
-            return;
-        };
-
         float vertical = Input.GetAxisRaw("Vertical");
         float horizontal = Input.GetAxisRaw("Horizontal");
 
@@ -110,9 +104,17 @@ public class Movement : MonoBehaviour
     void Update()
     {
         CheckInput();
-        if (inputTimer > 0 && isGrounded)
-            Move();
-        Jump();
+
+        if (movementState != MovementState.Immobilize)
+        {
+            if (inputTimer > 0 && isGrounded)
+                Move();
+            Jump();
+        }
+        else
+        {
+            body.velocity = Vector3.zero + Vector3.up * body.velocity.y;
+        }
 
         SpottableHandler();
 

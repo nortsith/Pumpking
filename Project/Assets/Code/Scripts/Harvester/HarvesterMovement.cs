@@ -48,12 +48,14 @@ public class HarvesterMovement : MonoBehaviour
         shouldReturnLastDestination = true;
         lastDestination = agent.transform.position;
         agent.SetDestination(player.position);
+        animator.SetBool("isAttacking", Vector3.Distance(transform.position, player.position) <= 3.5f);
     }
 
     private void Collect()
     {
         if (!agent.pathPending && agent.remainingDistance < 0.5f)
         {
+            animator.SetBool("isAttacking", false);
             Vector3 randomDestination = patrolPoints[Random.Range(0, patrolPoints.Length)].position;
 
             agent.destination = shouldReturnLastDestination ? lastDestination : randomDestination;
@@ -80,6 +82,7 @@ public class HarvesterMovement : MonoBehaviour
 
     IEnumerator LookAround()
     {
+        animator.SetBool("isAttacking", false);
         isLookingAround = true;
         agent.SetDestination(RandomNavmeshLocation(10f));
         yield return new WaitUntil(() => !agent.pathPending && agent.remainingDistance < 0.5f);
@@ -113,6 +116,7 @@ public class HarvesterMovement : MonoBehaviour
         }
 
         animator.SetBool("isWalking", harvesterState != HarvesterState.Seek);
+        agent.stoppingDistance = harvesterState == HarvesterState.Chase ? 3f : 0f;
     }
 
 }
